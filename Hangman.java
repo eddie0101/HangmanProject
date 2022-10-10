@@ -68,46 +68,74 @@ public class Hangman {
     "     |\n" +
     " =========\n"};
 
-    // ###############################################################################################
-    // ###############################################################################################
-    // ###############################################################################################
+    // ################################################################################################
+    // ###########################################   MAIN   ###########################################
+    // ################################################################################################
 
     public static void main(String[] args) {
 
-        while (true) {
+
+        while (nrOfMisses < gallows.length) {
             clearScreen();
+            System.out.println(word);
             printGame();
             inputLetter = scan.nextLine();
-            
+            if (word.indexOf(inputLetter) != -1) {
+                uncoverLetters();
+            }
+            else {
+                misses = misses + inputLetter + " ";
+                nrOfMisses++;
+            }
+            if (checkWin()) {
+                System.out.println("Congrats! You guessed the word!");
+                System.exit(0);
+            }
         }
 
-    }
+        System.out.println("Too many misses. You lost...");
+        System.out.println("The word was: " + word);
 
-    // ###############################################################################################
-    // ###############################################################################################
-    // ###############################################################################################
+    }
 
     static Scanner scan = new Scanner(System.in);
     static String word = words[(int) (Math.random() * (words.length - 1))]; // generating a random word
     static String[] wordArray = word.split("");
-    static int[] hiddenLetters = new int[words.length];
+    static boolean[] hiddenLetters = new boolean[word.length()];
     static String misses = "";
     static String guess;
     static String inputLetter;
+    static int nrOfMisses;
 
     public static void clearScreen() {
         System.out.print("\033[H\033[2J"); 
     }
 
+    public static boolean checkWin() {
+        for (int i = 0; i < hiddenLetters.length; i++) {
+            if (hiddenLetters[i] == false)
+                return false;
+        }
+        return true;
+    }
+
+    public static void uncoverLetters() {
+        for (int i = 0; i < wordArray.length; i++) {
+            if (wordArray[i].equals(inputLetter)) {
+                hiddenLetters[i] = true;
+            }
+        }
+    }
+
     public static void printGame() {
-        System.out.println(gallows[0]);
+        System.out.println(gallows[nrOfMisses]);
         System.out.print("Word: ");
         for (int i = 0; i < wordArray.length; i++) {
-            if (hiddenLetters[i] == 0) {
+            if (hiddenLetters[i] == false) {
                 System.out.print("_ ");
             }
             else {
-                System.out.println(wordArray[i] + " ");
+                System.out.print(wordArray[i] + " ");
             }
         }
         System.out.println();
